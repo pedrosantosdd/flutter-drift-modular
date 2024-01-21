@@ -1,0 +1,76 @@
+# Based on https://github.com/flame-engine/flame/blob/main/.gitignore
+
+# Miscellaneous
+*.class
+*.bak
+*.fvm
+# Miscellaneous
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.vscode/
+.venv/
+.svn/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/failures
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+android/
+ios/
+macos/
+windows/
+linux/
+desktop/
+**/build/
+**/coverage/
+**/pubspec_overrides.yaml
+**/*.mocks.dart
+**/*.config.dart
+**/*.module.dart
+**/*.drift.dart
+**/lib/generated_plugin_registrant.dart
+
+# Sphinx related
+__pycache__/
+_build/
+
+# Custom
+lib/generated_plugin_registrant.dart
+/metrics/
+.fvm/flutter_sdk
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
