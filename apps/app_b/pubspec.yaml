@@ -30,6 +30,8 @@ environment:
 dependencies:
   storage:
     path: ../../shared/storage
+  feature_a:
+    path: ../../modules/feature_a
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2

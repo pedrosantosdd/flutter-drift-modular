@@ -1,14 +1,19 @@
-import 'package:app_b/database.dart';
+import 'package:app_b/di/dependency_injection.dart';
+import 'package:feature_a/data/dao/todo_items_dao.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyHomePage(database: AppBDatabase()));
+  configureDependencies();
+  runApp(MyHomePage(
+    todoItemsDao: GetIt.I<TodoItemsDao>(),
+  ));
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.database});
-  final AppBDatabase database;
+  const MyHomePage({super.key, required this.todoItemsDao});
+  final TodoItemsDao todoItemsDao;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -16,13 +21,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   increaseDatabase() {
-    widget.database
-        .into(widget.database.todoItems)
-        .insert(TodoItemsCompanion.insert(
-          title: 'todo',
-          content:
-              '${DateTime.now().hour}:${DateTime.now().minute}:${DateTime.now().second}',
-        ));
+    widget.todoItemsDao.create('Todo: B:',
+        '${DateTime.now().hour}:${DateTime.now().minute}:${DateTime.now().second}');
   }
 
   @override
@@ -30,22 +30,30 @@ class _MyHomePageState extends State<MyHomePage> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('App B Database')),
-        body: StreamBuilder(
-            initialData: const [],
-            stream: widget.database.select(widget.database.todoItems).watch(),
-            builder: (context, snapshot) {
-              if (![ConnectionState.active, ConnectionState.done]
-                  .contains(snapshot.connectionState)) {
-                return const CircularProgressIndicator();
-              }
-              return ListView.builder(
-                shrinkWrap: true,
-                itemCount: snapshot.data?.length,
-                itemBuilder: (context, index) {
-                  return Text(snapshot.data?[index].title + snapshot.data?[index].content);
-                },
-              );
-            }),
+        body: SafeArea(
+          child: StreamBuilder(
+              initialData: const [],
+              stream: widget.todoItemsDao.getAllWatch(),
+              builder: (context, snapshot) {
+                if (![ConnectionState.active, ConnectionState.done]
+                    .contains(snapshot.connectionState)) {
+                  return const CircularProgressIndicator();
+                }
+                return GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 200, mainAxisExtent: 100),
+                  shrinkWrap: true,
+                  itemCount: snapshot.data
+                          ?.where((element) => element != null)
+                          .length ??
+                      1,
+                  itemBuilder: (context, index) => GridTile(
+                    child: Text(snapshot.data![index].title +
+                        snapshot.data![index].content),
+                  ),
+                );
+              }),
+        ),
         floatingActionButton: FloatingActionButton(
           onPressed: increaseDatabase,
           child: const Text('Load'),

@@ -1,9 +1,9 @@
 name: apps-workspace
 
 packages:
-  - modules/**
-  - apps/**
-  - shared/**
+  - shared/*
+  - modules/*
+  - apps/*
 
 command:
   bootstrap:
@@ -77,11 +77,11 @@ scripts:
 
 
   generate:
-    run: melos exec --concurrency=1 --fail-fast --depends-on="build_runner" -- dart pub run build_runner build --delete-conflicting-outputs
+    run: melos exec --concurrency=2 --fail-fast --order-dependents --depends-on="build_runner" -- dart pub run build_runner build --delete-conflicting-outputs
     description: Run all build_runner in this project.
 
   generate:clean:
-    run: melos exec --concurrency=1 --fail-fast --depends-on="build_runner" -- dart pub run build_runner clean
-    description: Run all build_runner in this project.
+    run: melos exec --depends-on="build_runner" -- dart pub run build_runner clean
+    description: Run clean build_runner in this project.
 
 

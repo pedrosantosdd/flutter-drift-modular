@@ -1,4 +1,4 @@
-import 'package:app_a/data/database.dart';
+import 'package:app_b/data/database.dart';
 import 'package:drift/drift.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
@@ -16,8 +16,8 @@ final getIt = GetIt.I;
 )
 void configureDependencies() {
   feature_a_di.configureDependencies(getIt);
-  final database = AppADatabase(SqlDatabase.openConnection('app-a'));
+  final database = AppBDatabase(SqlDatabase.openConnection('app-b'));
   getIt.registerSingleton<GeneratedDatabase>(database);
-  getIt.registerSingleton<AppADatabase>(database);
+  getIt.registerSingleton<AppBDatabase>(database);
   init(getIt);
 }

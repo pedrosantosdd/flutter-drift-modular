@@ -32,8 +32,6 @@ dependencies:
     path: ../../shared/storage
   feature_a:
     path: ../../modules/feature_a
-  feature_b:
-    path: ../../modules/feature_b
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
@@ -44,7 +42,6 @@ dependencies:
   sqlite3_flutter_libs: ^0.5.0
   path_provider: ^2.0.0
   path: ^1.8.3
-  drift_db_viewer: any
 
 
 dev_dependencies:
