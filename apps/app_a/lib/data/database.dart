@@ -3,7 +3,8 @@ import 'package:feature_a/data/database.dart';
 
 import 'database.drift.dart';
 
-@DriftDatabase(tables: [...FeatureADatabase.tables], daos: [...FeatureADatabase.daos])
+@DriftDatabase(
+    tables: [...FeatureADatabase.tables], daos: [...FeatureADatabase.daos])
 class AppADatabase extends $AppADatabase {
   AppADatabase(super.nativeDatabase);
 

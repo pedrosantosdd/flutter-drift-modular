@@ -22,7 +22,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   increaseDatabase() {
     widget.todoItemsDao.create('Todo: A:',
-        '${DateTime.now().hour}:${DateTime.now().minute}:${DateTime.now().second}');
+        '${DateTime.now().hour}:${DateTime.now().minute}:${DateTime.now().second}',
+        categoryId: 1);
   }
 
   @override
@@ -36,7 +37,8 @@ class _MyHomePageState extends State<MyHomePage> {
               stream: widget.todoItemsDao.getAllWatch(),
               builder: (context, snapshot) {
                 if (![ConnectionState.active, ConnectionState.done]
-                    .contains(snapshot.connectionState)) {
+                        .contains(snapshot.connectionState) ||
+                    snapshot.data == null) {
                   return const CircularProgressIndicator();
                 }
                 return ListView.builder(
@@ -48,6 +50,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemBuilder: (context, index) => ListTile(
                     title: Text(snapshot.data![index].title +
                         snapshot.data![index].content),
+                    subtitle: snapshot.data![index].categoryEntity == null
+                        ? null
+                        : Text(snapshot.data![index].categoryEntity.name),
                   ),
                 );
               }),
