@@ -8,15 +8,15 @@ fvm install
 # Install dependencies root
 fvm flutter pub get
 # Install dependencies from modules
-fvm flutter run melos bs
+fvm dart run melos bs
 ```
 
 ## Generate Code
 ```bash
 # Normal
-fvm flutter run melos generate
+fvm dart run melos generate
 # Watch
-fvm flutter run melos generate:watch
+fvm dart run melos generate:watch
 # Debug
-fvm flutter run melos generate:debug
+fvm dart run melos generate:debug
 ```
