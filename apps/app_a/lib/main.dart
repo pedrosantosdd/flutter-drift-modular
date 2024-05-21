@@ -50,9 +50,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemBuilder: (context, index) => ListTile(
                     title: Text(snapshot.data![index].title +
                         snapshot.data![index].content),
-                    subtitle: snapshot.data![index].categoryEntity == null
+                    subtitle: snapshot.data![index].category == null
                         ? null
-                        : Text(snapshot.data![index].categoryEntity.name),
+                        : Text(snapshot.data![index].category.name),
                   ),
                 );
               }),
