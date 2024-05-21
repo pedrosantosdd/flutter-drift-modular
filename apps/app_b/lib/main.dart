@@ -1,5 +1,5 @@
 import 'package:app_b/di/dependency_injection.dart';
-import 'package:feature_a/data/dao/todo_items_dao.dart';
+import 'package:feature_a/data/database.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 

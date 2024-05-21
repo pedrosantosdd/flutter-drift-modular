@@ -16,8 +16,6 @@ final getIt = GetIt.I;
 )
 void configureDependencies() {
   feature_a_di.configureDependencies(getIt);
-  final database = AppBDatabase(SqlDatabase.openConnection('app-b'));
-  getIt.registerSingleton<GeneratedDatabase>(database);
-  getIt.registerSingleton<AppBDatabase>(database);
+  getIt.registerSingleton<GeneratedDatabase>(AppBDatabase(SqlDatabase.openConnection('app-b')));
   init(getIt);
 }

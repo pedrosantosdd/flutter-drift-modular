@@ -49,6 +49,8 @@ desktop/
 **/build/
 **/coverage/
 **/pubspec_overrides.yaml
+**/pubspec.lock
+pubspec.lock
 **/*.mocks.dart
 **/*.config.dart
 **/*.module.dart

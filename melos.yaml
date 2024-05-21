@@ -56,8 +56,6 @@ scripts:
 
   test:select:
     run: melos exec -c 1 -- flutter test
-    ignore:
-      'packages/shared/apps_translations'
     packageFilters:
       dirExists: test
     description: Run `flutter test` for selected packages.
@@ -66,22 +64,47 @@ scripts:
     run: melos run test:select --no-select
     description: Run all Flutter tests in this project.
 
-  coverage:
-    run: |
-      melos exec -- flutter test --coverage
-    ignore:
-      'packages/shared/apps_translations'
-    packageFilters:
-      dirExists: test
-    description: Generate coverage for the selected package.
-
 
   generate:
-    run: melos exec --concurrency=2 --fail-fast --order-dependents --depends-on="build_runner" -- dart pub run build_runner build --delete-conflicting-outputs
-    description: Run all build_runner in this project.
+    run: dart run build_runner build --delete-conflicting-outputs
+    exec:
+      concurrency: 3
+      orderDependents: true
+      failFast: true
+    packageFilters:
+      dependsOn:
+        - build_runner
+    description: Run code generation using build_runner in a specific package
+  
+  generate:debug:
+    run: dart run build_runner build --delete-conflicting-outputs --verbose
+    exec:
+      orderDependents: true
+      failFast: true
+    packageFilters:
+      dependsOn:
+        - build_runner
+    description: Run code generation using build_runner in a specific package in debug mode
+
+  generate:watch:
+    run: dart run build_runner watch --delete-conflicting-outputs
+    exec:
+      orderDependents: true
+      failFast: true
+    packageFilters:
+      dependsOn:
+        - build_runner
+    description: Run code generation using build_runner in a specific package, and watch any changes in this package
 
   generate:clean:
-    run: melos exec --depends-on="build_runner" -- dart pub run build_runner clean
-    description: Run clean build_runner in this project.
+    run: dart run build_runner clean
+    exec:
+      concurrency: 1
+      orderDependents: true
+      failFast: true
+    packageFilters:
+      dependsOn:
+        - build_runner
+    description: Run code generation clean using build_runner in a specific package
 
 

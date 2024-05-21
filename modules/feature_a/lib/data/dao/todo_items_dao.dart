@@ -1,13 +1,23 @@
-import 'package:drift/drift.dart';
-import 'package:injectable/injectable.dart';
-
-import '../database.dart';
-import '../database.drift.dart';
-import 'todo_items_dao.drift.dart';
+part of '../database.dart';
 
 abstract class TodoItemsDao {
-  Stream<List<TodoItemsTableData>> getAllWatch();
+  Stream<List<ModelTodoItems>> getAllWatch();
   Future<int> create(String title, String content, {int? categoryId});
+}
+
+class ModelTodoItems {
+  final int id;
+  final String title;
+  final String content;
+  final int? categoryId;
+  final Category? category;
+
+  ModelTodoItems(
+      {required this.id,
+      required this.title,
+      required this.content,
+      required this.categoryId,
+      required this.category});
 }
 
 @LazySingleton(as: TodoItemsDao)
@@ -18,7 +28,7 @@ class TodoItemsDaoImpl extends DatabaseAccessor<GeneratedDatabase>
   TodoItemsDaoImpl(super.attachedDatabase);
 
   @override
-  Stream<List<TodoItemsTableData>> getAllWatch() {
+  Stream<List<ModelTodoItems>> getAllWatch() {
     return (select(todoItemsTable))
         .join([
           leftOuterJoin(super.categoriesTable,
@@ -27,12 +37,12 @@ class TodoItemsDaoImpl extends DatabaseAccessor<GeneratedDatabase>
         .watch()
         .map((rows) => rows.map((e) {
               final todoItem = e.readTable(super.todoItemsTable);
-              return TodoItemsTableData(
+              return ModelTodoItems(
                   content: todoItem.content,
                   id: todoItem.id,
                   title: todoItem.title,
-                  category: todoItem.category,
-                  categoryEntity: e.readTableOrNull(super.categoriesTable));
+                  categoryId: todoItem.category,
+                  category: e.readTableOrNull(super.categoriesTable));
             }).toList());
   }
 
