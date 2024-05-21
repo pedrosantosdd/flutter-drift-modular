@@ -1,21 +1,18 @@
 import 'package:app_b/data/database.dart';
 import 'package:drift/drift.dart';
+import 'package:feature_a/di/dependency_injection.module.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
-import 'package:feature_a/di/dependency_injection.dart' as feature_a_di;
 import 'package:storage/sql_database.dart';
 
 import 'dependency_injection.config.dart';
 
-final getIt = GetIt.I;
-
 @InjectableInit(
-  initializerName: 'init', // Default.
-  preferRelativeImports: true, // Default.
-  asExtension: false,
-)
+    asExtension: false,
+    externalPackageModulesBefore: [ExternalModule(FeatureAPackageModule)])
 void configureDependencies() {
-  feature_a_di.configureDependencies(getIt);
-  getIt.registerSingleton<GeneratedDatabase>(AppBDatabase(SqlDatabase.openConnection('app-b')));
+  final getIt = GetIt.I;
+  getIt.registerSingleton<GeneratedDatabase>(
+      AppBDatabase(SqlDatabase.openConnection('app-b')));
   init(getIt);
 }
