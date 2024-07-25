@@ -64,7 +64,6 @@ _build/
 # Custom
 lib/generated_plugin_registrant.dart
 /metrics/
-.fvm/flutter_sdk
 
 # Symbolication related
 app.*.symbols
@@ -76,3 +75,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# FVM Version Cache
+.fvm/

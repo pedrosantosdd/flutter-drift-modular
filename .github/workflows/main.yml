@@ -9,7 +9,7 @@ on:
 ## flutter_version should be equal to version on fvm config
 env:
   ci_reports_folder: ci/reports
-  flutter_version: 3.16.9
+  flutter_version: 3.19.6
   flutter_cache_key: 'flutter-:os:-:version:'
   flutter_pub_cache_key: 'flutter-pub-:os:-:version:-${{ github.ref_name }}'
   cache_build_path: |
@@ -39,7 +39,7 @@ jobs:
           restore-keys: build-runner-${{ github.sha }}
       - uses: bluefireteam/melos-action@v3
       - name: Setup
-        run: melos generate
+        run: melos generate:debug
   # BEGIN LINTING STAGE
   format:
     runs-on: ubuntu-latest
