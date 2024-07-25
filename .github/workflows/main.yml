@@ -39,7 +39,7 @@ jobs:
           restore-keys: build-runner-${{ github.sha }}
       - uses: bluefireteam/melos-action@v3
       - name: Setup
-        run: melos setup:ci
+        run: melos generate
   # BEGIN LINTING STAGE
   format:
     runs-on: ubuntu-latest
