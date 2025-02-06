@@ -1,4 +1,8 @@
 include: package:flutter_lints/flutter.yaml
-
-# Additional information about this file can be found at
-# https://dart.dev/guides/language/analysis-options
+analyzer:
+  exclude: [build/**, test/**.mocks.dart, lib/**.g.dart, lib/**.config.dart, lib/**.drift.dart, test/**.drift.dart, bricks/**.dart]
+  language:
+    strict-casts: true
+    strict-raw-types: false
+  errors:
+    non_constant_identifier_names: ignore

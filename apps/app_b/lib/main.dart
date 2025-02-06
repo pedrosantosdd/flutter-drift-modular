@@ -47,10 +47,15 @@ class _MyHomePageState extends State<MyHomePage> {
                           ?.where((element) => element != null)
                           .length ??
                       1,
-                  itemBuilder: (context, index) => GridTile(
-                    child: Text(snapshot.data![index].title +
-                        snapshot.data![index].content),
-                  ),
+                  itemBuilder: (context, index) {
+                    final itemData = snapshot.data![index] as ModelTodoItems;
+                    return ListTile(
+                      title: Text(itemData.title + itemData.content),
+                      subtitle: itemData.category == null
+                          ? null
+                          : Text(itemData.category?.name ?? ''),
+                    );
+                  },
                 );
               }),
         ),
