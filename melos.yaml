@@ -6,6 +6,9 @@ packages:
   - apps/*
 
 command:
+  clean:
+    hooks:
+      post: melos exec --flutter --concurrency=1 -- "flutter clean"
   bootstrap:
     runPubGetInParallel: false
     usePubspecOverrides: true
@@ -144,5 +147,15 @@ scripts:
       dependsOn:
         - build_runner
     description: Run code generation clean using build_runner in a specific package
+
+  packages:update:
+    run: flutter pub upgrade --major-versions --tighten
+    exec:
+      concurrency: 1
+      orderDependents: true
+    packageFilters:
+      dirExists:
+        - lib
+    description: Run update packages.s
 
 
