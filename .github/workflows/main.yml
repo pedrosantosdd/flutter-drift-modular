@@ -2,14 +2,26 @@ name: cicd
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize]
+    paths-ignore:
+      - '.github/release-drafter/**'
+      - '.github/workflows/**'
+      - '!.github/workflows/main.yml'
+      - '.github/**.md'
+      - 'fastlane/**'
+    types: [opened, reopened, synchronize, ready_for_review]
   push:
-    branches: [master]
+    paths-ignore:
+      - '.github/release-drafter/**'
+      - '.github/workflows/**'
+      - '!.github/workflows/main.yml'
+      - '.github/**.md'
+      - 'fastlane/**'
+    branches: [main]
 
 ## flutter_version should be equal to version on fvm config
 env:
   ci_reports_folder: ci/reports
-  flutter_version: 3.16.9
+  flutter_version: 3.24.5
   flutter_cache_key: 'flutter-:os:-:version:'
   flutter_pub_cache_key: 'flutter-pub-:os:-:version:-${{ github.ref_name }}'
   cache_build_path: |
@@ -19,10 +31,14 @@ env:
             **/*.config.dart
             **/*.drift.dart
             **/*.module.dart
+            **/shared/apps_translations/lib/app_localizations*.dart
             **/lib/generated_plugin_registrant.dart
+
+
 jobs:
   setup-project:
-    runs-on: ubuntu-latest
+    if: '! github.event.pull_request.draft'
+    runs-on: linux-amd64-16gb-4core
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2.15.0
@@ -39,7 +55,7 @@ jobs:
           restore-keys: build-runner-${{ github.sha }}
       - uses: bluefireteam/melos-action@v3
       - name: Setup
-        run: melos generate
+        run: melos setup:ci
   # BEGIN LINTING STAGE
   format:
     runs-on: ubuntu-latest
@@ -55,7 +71,7 @@ jobs:
       - uses: bluefireteam/melos-action@v3
         with:
           run-bootstrap: false
-      - run: melos run format-check
+      - run: melos format-check
 
   analyze:
     runs-on: ubuntu-latest
@@ -75,8 +91,58 @@ jobs:
           key: build-runner-${{ github.sha }}
           restore-keys: build-runner-${{ github.sha }}
       - uses: bluefireteam/melos-action@v3
-      - name: "Analyze with lowest supported version"
-        uses: invertase/github-action-dart-analyzer@v3.0.0
-        with:
-          fatal-infos: true
+      - run: melos analyze
   # END LINTING STAGE
+
+  # BEGIN TESTING STAGE
+  test:
+    runs-on: linux-amd64-16gb-4core
+    needs: [setup-project]
+    permissions:
+      statuses: write
+      checks: write
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: ⚙️ Install lcov
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install lcov
+      - name: ⚙️ Install sqlite
+        run: sudo apt install sqlite3 libsqlite3-dev
+      - uses: subosito/flutter-action@v2.15.0
+        with:
+          cache: true
+          cache-key: ${{ env.flutter_cache_key }}
+          pub-cache-key: ${{ env.flutter_pub_cache_key }}
+          flutter-version: ${{ env.flutter_version}}
+      - name: Cache build runner
+        uses: actions/cache@v4
+        with:
+          path: ${{env.cache_build_path}}
+          key: build-runner-${{ github.sha }}
+          restore-keys: build-runner-${{ github.sha }}
+      - uses: bluefireteam/melos-action@v3
+      - name: 🧪 Run tests with coverage
+        run: melos test:with-lcov-coverage:all
+      - name: 🧪✅❌ Publish test results
+        id: compute_test_results
+        uses: dorny/test-reporter@v1.8.0
+        with:
+          name: '🧪📊 Unit tests report'
+          path: ${{ env.ci_reports_folder}}/test_reports/*.json
+          reporter: 'flutter-json'
+          max-annotations: '50'
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: 🧪📊 Publish coverage report
+        if: github.event_name == 'pull_request'
+        uses: romeovs/lcov-reporter-action@2a28ec3e25fb7eae9cb537e9141603486f810d1a
+        with:
+          filter-changed-files: true
+          delete-old-comments: true
+          lcov-file: ${{ env.ci_reports_folder}}/coverage_report/cleaned_combined_lcov.info
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          title: 'Coverage Report'
+
+  # END TESTING STAGE
