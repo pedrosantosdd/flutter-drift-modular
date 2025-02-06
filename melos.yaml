@@ -55,14 +55,52 @@ scripts:
     description: Run `dart format` checks for all packages.
 
   test:select:
-    run: melos exec -c 1 -- flutter test
+    run: flutter test --no-pub --reporter compact
+    exec:
+      concurrency: 3
     packageFilters:
-      dirExists: test
-    description: Run `flutter test` for selected packages.
+      dirExists:
+        - test
+    description: Run `flutter test` for a specific package.
 
   test:
     run: melos run test:select --no-select
     description: Run all Flutter tests in this project.
+
+  test:combine-coverage:
+    run: MELOS_ROOT_PATH/ci/scripts/test/combine-coverage.sh MELOS_ROOT_PATH
+    description: Combine individual lcov coverage into a single lcov coverage file
+
+  test:generate-html-coverage:
+    run: MELOS_ROOT_PATH/ci/scripts/test/generate-html-coverage.sh MELOS_ROOT_PATH
+    description: Take combined lcov file and generate a human-readable HTML report
+
+  test:with-lcov-coverage:
+    run: MELOS_ROOT_PATH/ci/scripts/test/test-with-coverage.sh MELOS_ROOT_PATH MELOS_PACKAGE_PATH MELOS_PACKAGE_NAME
+    exec:
+      concurrency: 2
+    packageFilters:
+      dirExists:
+        - test
+    description: Run Flutter tests and publish local lcov coverage for a specific package
+
+  test:with-lcov-coverage:all:
+    run: |
+      melos run test:with-lcov-coverage --no-select && \
+      melos run test:combine-coverage
+    description: Run Flutter tests for all packages and generate a combined lcov coverage report
+
+  test:with-html-coverage:
+    run: |
+      MELOS_ROOT_PATH/ci/scripts/test/test-with-coverage.sh MELOS_ROOT_PATH MELOS_PACKAGE_PATH MELOS_PACKAGE_NAME && \
+      melos run test:combine-coverage && \
+      melos run test:generate-html-coverage
+    exec:
+      concurrency: 2
+    packageFilters:
+      dirExists:
+        - test
+    description: Run Flutter tests for a specific package and updates global HTML coverage report
 
 
   generate:
